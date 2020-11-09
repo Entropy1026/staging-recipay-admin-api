@@ -1,0 +1,19 @@
+<?php
+use Doctrine\DBAL\Driver\PDOMySql\Driver as PDOMySqlDriver;
+
+return [
+    'doctrine' => [
+        'connection' => [
+            'orm_default' => [
+                'driverClass' => PDOMySqlDriver::class,
+                'params' => [
+                    'host'     => 'sql12.freesqldatabase.com',                    
+                    'user'     => 'sql12300434',
+                    'password' => 'PvJvWZp2Ye',
+                    'dbname'   => 'sql12300434',
+                    'port'   => '3306',
+                ]
+            ],            
+        ],        
+    ],
+];
