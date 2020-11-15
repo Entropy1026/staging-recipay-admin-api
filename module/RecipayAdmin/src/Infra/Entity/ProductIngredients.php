@@ -30,7 +30,7 @@ class ProductIngredients
      */
     protected $ingredients_id;
      /**
-     * @ORM\Column(type="integer", length=1000, name="quantity" , nullable=false)
+     * @ORM\Column(type="decimal", precision=4, scale=2 ,name="quantity" , nullable=false)
      * @var string
      */
     protected $quantity;

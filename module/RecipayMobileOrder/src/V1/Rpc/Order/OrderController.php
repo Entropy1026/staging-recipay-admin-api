@@ -87,7 +87,7 @@ class OrderController extends BaseLogActionController
         $forReturn['data'] = [];
       } else {
         foreach ($cart as $c) {
-          $product = $this->productRepository->fetchById($c->getProduct_id());
+          $product = $this->productRepository->fetchById($c->getProduct_id()->getId());
           $forReturn["error"] = false;
           $forReturn["message"] = "Successfully Fetch Cart Items";
           foreach ($product as $p) {
@@ -111,7 +111,8 @@ class OrderController extends BaseLogActionController
   {
     try {
       $params = $this->getParams();
-      $cart = new Cart($params['product_id'], $params['user_id'], $params['quantity']);
+      $product = $this->productRepository->fetchById($params['product_id']);
+      $cart = new Cart($product[0], $params['user_id'], $params['quantity']);
       $this->cartRepository->persist($cart);
       $this->cartRepository->flush();
       $forReturn = [
@@ -162,7 +163,7 @@ class OrderController extends BaseLogActionController
     $forReturn = [];
     $cartitems = $this->cartRepository->findById("order_id", $id);
     foreach ($cartitems as $c) {
-      $product = $this->productRepository->fetchById($c->getProduct_id());
+      $product = $this->productRepository->fetchById($c->getProduct_id()->getId());
       array_push(
         $forReturn,
         [ 
@@ -211,7 +212,7 @@ class OrderController extends BaseLogActionController
         $this->cartRepository->persist($item);
         $this->cartRepository->flush($item);
 
-        $product = $this->productRepository->fetchById($item->getProduct_id());
+        $product = $this->productRepository->fetchById($item->getProduct_id()->getId());
         $product[0]->setStock($product[0]->getStock()-$item->getQuantity());
         $product[0]->setSales_count($product[0]->getSales_count()+$item->getQuantity());
         $this->productRepository->persist($product[0]);

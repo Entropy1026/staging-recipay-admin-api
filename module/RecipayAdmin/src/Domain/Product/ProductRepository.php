@@ -30,7 +30,12 @@ class ProductRepository extends BaseRepository
     public function fetchByMenu($menu_id)
     {
         $builder = $this->createQuery();
+        if($menu_id){
         $builder->fetchByMenu($menu_id);
+        }
+        else{
+        $builder->select();  
+        }
         $qb = $builder->getQueryBuilder();
         $query = $qb->getQuery();
         return $query->getResult();

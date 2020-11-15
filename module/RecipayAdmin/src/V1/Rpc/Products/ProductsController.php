@@ -74,6 +74,8 @@ class ProductsController extends BaseLogActionController
             $forReturn[] = [
                 "id" => $i->getId(),
                 "name" => $i->getIngredients_id()->getName(),
+                "product"=> $i->getIngredients_id()->getId(),
+                "image" => $i->getIngredients_id()->getImage(),
                 "unit" => $i->getIngredients_id()->getUnit(),
                 "quantity" => $i->getQuantity(),
             ];
@@ -104,9 +106,9 @@ class ProductsController extends BaseLogActionController
     {
         $params = $this->getParams();
         foreach ($params['ingredients'] as $i) {
-            $this->createProductIngredients($i["id"] ? $i["id"] : null, $i["product_id"], $i["ingredients_id"], $i["quantity"]);
+            $this->createProductIngredients($i["id"] ? $i["id"] : null, $params["product_id"], $i["ingredients_id"], $i["quantity"]);
         }
-
+         return new JsonModel($this->productIngredientsJson($params["product_id"]));
     }
     public function deleteproductingredientsAction()
     {
@@ -152,6 +154,42 @@ class ProductsController extends BaseLogActionController
             ];
         }
         return $forReturn;
+    }
+    public function productById($id,$user){
+        $forReturn = [];
+        $product = $this->productRepository->fetchById($id);
+        foreach ($product as $p) {
+            $forReturn[] = [
+                "id" => $p->getId(),
+                "name" => $p->getName(),
+                "image" => $p->getImage(),
+                "ingredients" => $this->productIngredientsJson($p->getId()),
+                "text_instruction" => $p->getTextinstruction(),
+                "video" => $p->getRecipevideo(),
+                "price" => $p->getBaseprice(),
+                "category" => $p->getCategory(),
+                "sold" => $p->getSales_count(),
+                "available" => $p->getStock(),
+                "restock" => $p->getRestock(),
+                "replinesh" => $p->getReplenish(),
+                "menu" => [
+                    "id" => $p->getMenu()->getId(),
+                    "name" => $p->getMenu()->getName(),
+                ],
+                "category" => [
+                    "id" => $p->getCategory()->getId(),
+                    "name" => $p->getCategory()->getName(),
+                ],
+                "favorite"=>$this->checkfavorite($user,$p->getId()),
+                "pax" => $p->getPax(),
+                "rate" => $this->getratings($p->getId()),
+                "comments" => $this->getComment($p->getId())
+            ];
+        }
+    }
+    public function productFindByIdAnUserAction(){
+        $params = $this->getParams();
+        return new JsonModel($this->productById($params['prod'],$params['user']));
     }
     public function productlistAction()
     {
